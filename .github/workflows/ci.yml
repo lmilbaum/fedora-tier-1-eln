@@ -1,0 +1,25 @@
+name: ci
+
+on:
+
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  build-image:
+    runs-on: ubuntu-latest
+
+    container:
+      image: quay.io/centos-boot/builder:latest@sha256:fa814ae44e9c962f39020e0020111bb9d4cfdb52acc27dae2ca9d7fe301b61c3
+      options: --privileged
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Build
+        run: |
+          rpm-ostree compose image --format=ociarchive \
+          --initialize fedora-tier-1-eln.yaml \
+          dest.oci-archive
